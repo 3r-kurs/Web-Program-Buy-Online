@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<script>
+    $.ajax({
+        type: "GET",
+        url: "buying.php",
+        success: function (items) {
+            items = JSON.parse(items);
+            let table = document.getElementById("tableContents");
+            let num = 1;
+            items.forEach((element) => {
+                let row = table.insertRow(-1);
+                let number = row.insertCell(0);
+                number.innerText = num;
+                number.style = "width: 100px;";
+                for (var key in element) {
+                    if (key == "id") {
+                        continue;
+                    }
+                    let col = row.insertCell(-1);
+                    col.style = "width: 100px;";
+                    col.innerText = element[key];
+                }
+                let addButton = row.insertCell(-1);
+                // var btn = document.createElement("button");
+                // btn.type = "button";
+                // btn.className = "btn btn-default";
+                // btn.innerText = "Add to cart";
+                // btn.role = "dialog";
+                // btn.id = "modal" + element["id"];
+                // btn.value = element["id"];
+                var btn = document.createElement("input");
+                btn.type = "button";
+                btn.className = "btn btn-default";
+                btn.value = "Add to cart";
+                btn.onclick = function () {
+                    if (localStorage.getItem("cartItems") === null) {
+                        localStorage.setItem("cartItems", "[]");
+                    }
+                    var cartItems = JSON.parse(
+                        localStorage.getItem("cartItems")
+                    );
+                    cartItems.push(element);
+                    localStorage.setItem(
+                        "cartItems",
+                        JSON.stringify(cartItems)
+                    );
+                    console.log(localStorage.getItem("cartItems"));
+
+                    showAlert();
+                };
+                addButton.style = "width: 100px;";
+                addButton.appendChild(btn);
+                num++;
+            });
+        },
+    });
+
+    function showAlert() {
+        $("#success-alert")
+            .fadeTo(2000, 500)
+            .slideUp(500, function () {
+                $("#success-alert").slideUp(500);
+            });
+    }
+</script>
+
+<style>
+    td,
+    th {
+        border-bottom: 1px solid #aaa;
+        border-top: 1px solid #aaa;
+        border-collapse: collapse;
+        text-align: center;
+        height: 40px;
+    }
+</style>
+
+<html>
+    <body>
+        <div
+            class="container"
+            style="
+                width: 60%;
+                margin-top: 20vh;
+                height: 70vh;
+                overflow: auto;
+                margin-top: 15vh;
+                background-color: white;
+                border-radius: 20px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1),
+                    0 6px 20px 0 rgba(0, 0, 0, 0.09);
+            ">
+            <table
+                id="tableContents"
+                class="table"
+                style="text-align: center; margin-top: 8px">
+                <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Add</th>
+                </tr>
+            </table>
+        </div>
+    </body>
+
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <p>Some text in the modal.</p>
+                </div>
+                <div class="modal-footer">
+                    <button
+                        type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</html>

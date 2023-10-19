@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="login.js"></script>
+<html>
+    <body>
+        <div
+            class="container"
+            style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: calc((100vh - 400px) / 2);
+                height: 400px;
+                width: 400px;
+                background-color: rgb(240, 240, 240);
+                border-radius: 30px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+                    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            ">
+            <div style="display: block">
+                <div class="row" style="text-align: center">
+                    <h3>Manager Login</h3>
+                </div>
+                <form onsubmit="">
+                    <div class="row" style="margin-top: 32px">
+                        <input
+                            class="form-control input-lg"
+                            style="font-size: medium"
+                            class="col sw-6"
+                            type="text"
+                            placeholder="Username"
+                            name="username" />
+                    </div>
+                    <div class="row" style="margin-top: 16px">
+                        <input
+                            class="form-control input-lg"
+                            style="font-size: medium"
+                            type="password"
+                            placeholder="Password"
+                            name="password" />
+                    </div>
+                    <div class="row" style="margin-top: 16px">
+                        <label class="checkbox-inline" for="remember"
+                            ><input id="remember" type="checkbox" />Remember
+                            Me</label
+                        >
+                    </div>
+                    <div
+                        class="row"
+                        style="margin-top: 16px; margin-bottom: 32px">
+                        <input
+                            class="btn btn-primary col-sm-12"
+                            style="
+                                height: 50px;
+                                width: calc(100% - 80px);
+                                margin-left: 40px;
+                                border-radius: 10px;
+                            "
+                            type="submit"
+                            name="submit"
+                            value="Login" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

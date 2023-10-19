@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+<link rel="stylesheet" href="styles.css" />
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<!-- md5 hash -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/md5.js"></script>
+
+<script>
+    function Login() {
+        var email = document.getElementById("email").value;
+        var password = CryptoJS.MD5(
+            document.getElementById("password").value
+        ).toString();
+        $.ajax({
+            type: "POST",
+            url: "login.php",
+            data: {
+                email: email,
+                password: password,
+            },
+            success: function (data) {
+                localStorage.setItem("userinfo", data);
+                document.location.href = "buying.html";
+            },
+            error: function (xhr, status, error) {
+                alert("xhr: " + xhr.responseText + " error: " + error);
+            },
+        });
+    }
+</script>
+<html>
+    <body>
+        <div
+            class="container"
+            style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: calc((100vh - 400px) / 2);
+                height: 400px;
+                width: 400px;
+                background-color: rgb(240, 240, 240);
+                border-radius: 30px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+                    0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            ">
+            <div style="display: block">
+                <div class="row" style="text-align: center">
+                    <h3>Customer Login</h3>
+                </div>
+                <form>
+                    <div class="row" style="margin-top: 16px">
+                        <input
+                            class="form-control input-lg"
+                            style="font-size: medium"
+                            class="col sw-6"
+                            type="text"
+                            placeholder="Email"
+                            id="email" />
+                    </div>
+                    <div class="row" style="margin-top: 8px">
+                        <input
+                            class="form-control input-lg"
+                            style="font-size: medium"
+                            type="password"
+                            placeholder="Password"
+                            id="password" />
+                    </div>
+                    <div class="row" style="margin-top: 16px">
+                        <label class="checkbox-inline" for="remember"
+                            ><input id="remember" type="checkbox" />Remember
+                            Me</label
+                        >
+                    </div>
+                    <div class="row" style="margin-top: 16px">
+                        <input
+                            class="btn btn-primary col-sm-12"
+                            style="
+                                height: 50px;
+                                width: calc(100% - 80px);
+                                margin-left: 40px;
+                                border-radius: 10px;
+                            "
+                            name="submit"
+                            onclick="Login()"
+                            value="Login" />
+                    </div>
+                </form>
+                <div class="row" style="margin-top: 8px">
+                    <button
+                        class="btn btn-default col-sm-12"
+                        style="
+                            height: 50px;
+                            width: calc(100% - 80px);
+                            margin-left: 40px;
+                            margin-bottom: 30px;
+                            border-radius: 10px;
+                        "
+                        onclick="document.location.href='register.html'">
+                        Sign Up
+                    </button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
