@@ -8,7 +8,7 @@ if (empty($_POST["email"])) {
     http_response_code(400);
     die("email is required");
 }
-if (empty($_POST["password"])) {
+if (empty($_POST["password"]) || $_POST["password"] == "d41d8cd98f00b204e9800998ecf8427e") {
     http_response_code(400);
     die("password is required");
 }
@@ -20,14 +20,14 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     die("invalid email address");
 }
 
-$password = EncryptPassword($_POST["password"]);
+$password = HashPassword($_POST["password"]);
 
 $xmlFile = file_get_contents("customer.xml");
 $xml = simplexml_load_string($xmlFile);
 for ($i = 0; $i < count($xml); $i++) {
     if ($email == $xml->user[$i]->email) {
         if ($password == $xml->user[$i]->password) {
-            $_SESSION["loginSession"] = 1;
+            $_SESSION["customer"] = (int) $xml->user[$i]->id;
             http_response_code(200);
             $response = new stdClass();
             $response->id = (int) $xml->user[$i]->id;

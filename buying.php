@@ -1,10 +1,11 @@
 <?php
 include("utils.php");
 
-if (!LoggedIn()) {
+if (!isCustomer()) {
     http_response_code(401);
     die("unauthorized");
 }
+
 
 $xmlFile = file_get_contents("buying.xml");
 $xml = simplexml_load_string($xmlFile);

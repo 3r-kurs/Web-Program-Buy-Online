@@ -2,12 +2,14 @@
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Register</title>
 <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
 <link rel="stylesheet" href="styles.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="utils.js"></script>
 
 <!-- md5 hash -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/core.min.js"></script>
@@ -18,7 +20,7 @@
         var email = document.getElementById("email").value;
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
-        var encryptedPassword = CryptoJS.MD5(
+        var md5Password = CryptoJS.MD5(
             document.getElementById("password").value
         ).toString();
         var phone_no = document.getElementById("phone_no").value;
@@ -29,15 +31,15 @@
                 email: email,
                 firstname: firstname,
                 lastname: lastname,
-                password: encryptedPassword,
+                password: md5Password,
                 phone_no: phone_no,
             },
             success: function (data) {
                 alert("success");
-                // document.location.href = "login.html";
             },
             error: function (xhr, status, error) {
-                alert("xhr: " + xhr.responseText + " error: " + error);
+                console.log(xhr);
+                showAlert(xhr);
             },
         });
     }
@@ -60,7 +62,7 @@
                     0 6px 20px 0 rgba(0, 0, 0, 0.19);
             ">
             <div style="display: block">
-                <form onsubmit="Register()" method="post">
+                <form method="post">
                     <div class="row" style="margin-top: 16px">
                         <input
                             class="form-control input-lg"
@@ -75,16 +77,16 @@
                             class="form-control input-lg"
                             style="font-size: medium"
                             type="text"
-                            placeholder="First name"
-                            id="firstname" />
+                            placeholder="Last name"
+                            id="lastname" />
                     </div>
                     <div class="row" style="margin-top: 16px">
                         <input
                             class="form-control input-lg"
                             style="font-size: medium"
                             type="text"
-                            placeholder="Last name"
-                            id="lastname" />
+                            placeholder="First name"
+                            id="firstname" />
                     </div>
                     <div class="row" style="margin-top: 16px">
                         <input
@@ -118,7 +120,9 @@
                                 width: calc(100% - 80px);
                                 margin-left: 40px;
                             "
-                            name="submit">
+                            type="button"
+                            name="submit"
+                            onclick="Register()">
                             Register
                         </button>
                     </div>
@@ -137,5 +141,9 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            Alert();
+        </script>
     </body>
 </html>

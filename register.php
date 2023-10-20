@@ -3,46 +3,42 @@
 include("utils.php");
 
 if (empty($_POST["email"])) {
-    echo "email is required";
     http_response_code(400);
-    exit();
+    die("Email is required");
 }
-if (empty($_POST["lastname"])) {
-    echo "lastname is required";
+$email = $_POST["email"];
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     http_response_code(400);
-    exit();
-}
-if (empty($_POST["firstname"])) {
-    echo "firstname is required";
-    http_response_code(400);
-    exit();
-}
-if (empty($_POST["password"])) {
-    echo "password is required";
-    http_response_code(400);
-    exit();
+    die("invalid email address");
 }
 
-$email = $_POST["email"];
+if (empty($_POST["lastname"])) {
+    http_response_code(400);
+    die("Last name is required");
+}
 $lastname = $_POST["lastname"];
+
+if (empty($_POST["firstname"])) {
+    http_response_code(400);
+    die("First name is required");
+}
 $firstname = $_POST["firstname"];
-$password = EncryptPassword($_POST["password"]);
+
+if (empty($_POST["password"]) || $_POST["password"] == "d41d8cd98f00b204e9800998ecf8427e") {
+    http_response_code(400);
+    die("Password is required");
+}
+$password = HashPassword($_POST["password"]);
 $phone_no = isset($_POST["phone_no"]) ? $_POST["phone_no"] : '';
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    echo "invalid email address";
-    http_response_code(400);
-    exit();
-}
 
 $xmlFile = file_get_contents("customer.xml");
 $xml = simplexml_load_string($xmlFile);
 
 for ($i = 0; $i < $xml->count(); $i++) {
     if ($xml->user[$i]->email == $email) {
-        echo "email already exists";
         http_response_code(400);
-        exit();
+        die("email already exists");
     }
 }
 
@@ -58,6 +54,7 @@ $user->addChild('password', $password);
 $user->addChild('phone_no', $phone_no);
 
 $increment->customer_id = $increment->customer_id + 1;
+
 $increment->asXML("increment.xml");
 $xml->asXML("customer.xml");
 ?>
