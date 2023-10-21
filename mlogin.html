@@ -2,13 +2,38 @@
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Manager Login</title>
 <link
     rel="stylesheet"
     href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
 <link rel="stylesheet" href="styles.css" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script src="login.js"></script>
+<script src="utils.js"></script>
+
+<script>
+    function Login() {
+        username = document.getElementById("username").value;
+        password = document.getElementById("password").value;
+
+        $.ajax({
+            url: "mlogin.php",
+            type: "post",
+            data: {
+                username: username,
+                password: password,
+            },
+            success: function (data) {
+                localStorage.manager = data;
+                document.location.href = "listing.html";
+            },
+            error: function (xhr, status, code) {
+                showAlert(xhr);
+            },
+        });
+    }
+</script>
+
 <html>
     <body>
         <div
@@ -29,7 +54,7 @@
                 <div class="row" style="text-align: center">
                     <h3>Manager Login</h3>
                 </div>
-                <form onsubmit="">
+                <form>
                     <div class="row" style="margin-top: 32px">
                         <input
                             class="form-control input-lg"
@@ -37,7 +62,7 @@
                             class="col sw-6"
                             type="text"
                             placeholder="Username"
-                            name="username" />
+                            id="username" />
                     </div>
                     <div class="row" style="margin-top: 16px">
                         <input
@@ -45,7 +70,7 @@
                             style="font-size: medium"
                             type="password"
                             placeholder="Password"
-                            name="password" />
+                            id="password" />
                     </div>
                     <div class="row" style="margin-top: 16px">
                         <label class="checkbox-inline" for="remember"
@@ -56,7 +81,7 @@
                     <div
                         class="row"
                         style="margin-top: 16px; margin-bottom: 32px">
-                        <input
+                        <button
                             class="btn btn-primary col-sm-12"
                             style="
                                 height: 50px;
@@ -64,12 +89,17 @@
                                 margin-left: 40px;
                                 border-radius: 10px;
                             "
-                            type="submit"
+                            type="button"
                             name="submit"
-                            value="Login" />
+                            onclick="Login();">
+                            Login
+                        </button>
                     </div>
                 </form>
             </div>
         </div>
+        <script>
+            Alert();
+        </script>
     </body>
 </html>

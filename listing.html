@@ -1,0 +1,122 @@
+<html>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Listing</title>
+    <link
+        rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="utils.js"></script>
+
+    <script>
+        function AddProduct() {
+            let name = document.getElementById("name").value;
+            let price = document.getElementById("price").value;
+            let quantity = document.getElementById("quantity").value;
+            let description = document.getElementById("description").value;
+            $.ajax({
+                url: "listing.php",
+                type: "post",
+                data: {
+                    name: name,
+                    price: price,
+                    quantity: quantity,
+                    description: description,
+                },
+                success: function (data) {
+                    showAlert([
+                        "Success!",
+                        "The item has been listed in the system, and the item number is: " +
+                            data,
+                    ]);
+                },
+                error: function (xhr, status, code) {
+                    showAlert(xhr);
+                },
+            });
+        }
+    </script>
+
+    <body>
+        <script>
+            ManagerHeader();
+        </script>
+
+        <div
+            class="container"
+            style="
+                margin: auto;
+                width: 90vh;
+                background-color: white;
+                border-radius: 20px;
+            ">
+            <form>
+                <h3>Add new item</h3>
+                <table class="table">
+                    <tr>
+                        <td style="width: 100px">Item name</td>
+                        <td>
+                            <input
+                                type="text"
+                                id="name"
+                                class="form-control"
+                                required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px">Item price</td>
+                        <td>
+                            <input
+                                type="number"
+                                step="0.001"
+                                id="price"
+                                class="form-control"
+                                required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px">Item quantity</td>
+                        <td>
+                            <input
+                                type="number"
+                                id="quantity"
+                                class="form-control"
+                                required />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px">Item description</td>
+                        <td>
+                            <textarea
+                                id="description"
+                                class="form-control"
+                                required></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <div class="row">
+                    <div class="column col-sm-4">
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            onclick="AddProduct()">
+                            Add Item
+                        </button>
+                    </div>
+                    <div class="column col-sm-4">
+                        <input
+                            type="reset"
+                            class="btn btn-default"
+                            value="reset" />
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script>
+            Alert();
+        </script>
+    </body>
+</html>

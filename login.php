@@ -22,7 +22,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 $password = HashPassword($_POST["password"]);
 
-$xmlFile = file_get_contents("customer.xml");
+$xmlFile = file_get_contents("data/customer.xml");
 $xml = simplexml_load_string($xmlFile);
 for ($i = 0; $i < count($xml); $i++) {
     if ($email == $xml->user[$i]->email) {

@@ -27,14 +27,24 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function Header() {
-    fetch('header.html')
+function CustomerHeader() {
+    fetch('customerheader.html')
         .then(response => response.text())
         .then(data => {
             document.body.insertAdjacentHTML('afterbegin', data);
         })
         .catch(error => console.error(error));
 }
+
+function ManagerHeader() {
+    fetch('managerheader.html')
+        .then(response => response.text())
+        .then(data => {
+            document.body.insertAdjacentHTML('afterbegin', data);
+        })
+        .catch(error => console.error(error));
+}
+
 
 function Alert() {
     fetch('alert.html')
@@ -65,3 +75,5 @@ function reviver(key, value) {
     }
     return value;
 }
+
+

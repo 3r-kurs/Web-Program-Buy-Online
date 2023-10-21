@@ -32,7 +32,7 @@ $password = HashPassword($_POST["password"]);
 $phone_no = isset($_POST["phone_no"]) ? $_POST["phone_no"] : '';
 
 
-$xmlFile = file_get_contents("customer.xml");
+$xmlFile = file_get_contents("data/customer.xml");
 $xml = simplexml_load_string($xmlFile);
 
 for ($i = 0; $i < $xml->count(); $i++) {
@@ -42,7 +42,7 @@ for ($i = 0; $i < $xml->count(); $i++) {
     }
 }
 
-$incrementFile = file_get_contents("increment.xml");
+$incrementFile = file_get_contents("data/increment.xml");
 $increment = simplexml_load_string($incrementFile);
 
 $user = $xml->addChild('user');
@@ -55,6 +55,6 @@ $user->addChild('phone_no', $phone_no);
 
 $increment->customer_id = $increment->customer_id + 1;
 
-$increment->asXML("increment.xml");
-$xml->asXML("customer.xml");
+$increment->asXML("data/increment.xml");
+$xml->asXML("data/customer.xml");
 ?>
