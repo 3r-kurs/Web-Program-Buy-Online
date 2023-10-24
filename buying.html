@@ -12,13 +12,17 @@
 <script src="utils.js"></script>
 
 <script>
-    function init() {
+    function products() {
+        $(document).ready(function () {
+            document.getElementById("totalAmount").innerText =
+                "Total: " + CalculateAmount() + "$";
+        });
         $.ajax({
             type: "GET",
             url: "buying.php",
             success: function (items) {
                 items = JSON.parse(items);
-                let table = document.getElementById("tableContents");
+                let table = document.getElementById("products");
                 table.innerHTML =
                     "<tr><th>No.</th><th>Name</th><th>Description</th><th>Price</th><th>Quantity</th><th>In Cart</th></tr>";
                 let num = 1;
@@ -26,14 +30,22 @@
                     let row = table.insertRow(-1);
                     let number = row.insertCell(0);
                     number.innerText = num;
-                    number.style = "width: 100px;";
+                    number.style = "width: 20px;";
+                    element["description"] =
+                        element["description"].length > 20
+                            ? element["description"].slice(0, 20) + "..."
+                            : element["description"];
                     for (var key in element) {
                         if (key == "id") {
                             continue;
                         }
                         let col = row.insertCell(-1);
                         col.style = "width: 100px;";
-                        col.innerText = element[key];
+                        if (key == "price") {
+                            col.innerText = "$" + element[key];
+                        } else {
+                            col.innerText = element[key];
+                        }
                     }
                     let inCart = row.insertCell(-1);
                     inCart.style = "flex:inline";
@@ -44,38 +56,23 @@
                     rmv.style =
                         "border-radius:10px; height:30px; width:30px; line-height:30px;text-align:center; padding:0;";
                     rmv.innerText = "-";
-                    rmv.onclick = function () {
-                        let cart = JSON.parse(
-                            localStorage.getItem("inCart"),
-                            reviver
-                        );
-                        console.log(cart);
-                        if (cart == null) {
-                            cart = new Map();
-                        }
-                        count =
-                            cart.get(element["id"]) == undefined
-                                ? 0
-                                : cart.get(element["id"]);
-                        console.log(element["id"]);
-                        cart.set(element["id"], count - 1);
-                        console.log(cart);
-                        console.log(JSON.stringify(cart, replacer));
-                        localStorage.setItem(
-                            "inCart",
-                            JSON.stringify(cart, replacer)
-                        );
-                    };
 
+                    value = getCount(element["id"]);
                     var cnt = document.createElement("span");
-                    cnt.innerText =
-                        localStorage.getItem("inCart") != null
-                            ? JSON.parse(localStorage.getItem("inCart"))[
-                                  element["id"]
-                              ]
-                            : 0;
+                    cnt.id = element["id"];
                     cnt.style =
                         "width:fit-content; margin-left:10px; margin-right:10px";
+                    cnt.innerText = value;
+
+                    rmv.onclick = function () {
+                        if (
+                            document.getElementById(element["id"]).innerText <=
+                            0
+                        ) {
+                            return false;
+                        }
+                        changeCount(element, "rmv");
+                    };
 
                     var add = document.createElement("button");
                     add.type = "button";
@@ -85,11 +82,7 @@
                         "border-radius:10px; height:30px; width:30px; line-height:30px;text-align:center; padding:0";
                     add.innerText = "+";
                     add.onclick = function () {
-                        var cart = localStorage.getItem("inCart");
-                        if (cart == null) {
-                            cart = new Map();
-                        }
-                        cart.set(element["id"], cart.get(element["id"]) + 1);
+                        changeCount(element, "add");
                     };
 
                     inCart.style = "width: 100px;";
@@ -104,18 +97,152 @@
             },
         });
     }
-    $(document).ready(init());
+
+    $(document).ready(products());
     setInterval(() => {
-        init();
+        products();
     }, 10000);
+
+    function getCount(id) {
+        cart = JSON.parse(localStorage.getItem("inCart") || "[]");
+        for (let i = 0; i < cart.length; i++) {
+            const element = cart[i];
+            if (element.elem.id == id) {
+                return element.count;
+            }
+        }
+        return 0;
+    }
+
+    function setCount(elem, op) {
+        cart = JSON.parse(localStorage.inCart || "[]");
+        let itemIndex = -1;
+        for (let i = 0; i < cart.length; i++) {
+            element = cart[i];
+            if (element.elem.id == elem.id) {
+                itemIndex = i;
+            }
+        }
+        if (itemIndex == -1) {
+            cart.push({ elem: elem, count: 0 });
+            itemIndex = cart.length - 1;
+        }
+        op == "add" ? cart[itemIndex].count++ : cart[itemIndex].count--;
+        localStorage.setItem("inCart", JSON.stringify(cart));
+        document.getElementById(elem.id).innerText = getCount(elem.id);
+    }
+
+    function changeCount(elem, op) {
+        $.ajax({
+            url: "buying.php",
+            type: "post",
+            data: {
+                id: elem.id,
+                operation: op,
+            },
+            success: function (data) {
+                setCount(elem, op);
+                document.getElementById("totalAmount").innerText =
+                    "Total: " + CalculateAmount() + "$";
+                showAlert(["Success!", ""]);
+            },
+            error: function (xhr) {
+                showAlert(xhr);
+            },
+        });
+    }
+
+    function CalculateAmount() {
+        cart = JSON.parse(localStorage.getItem("inCart") || "[]");
+        result = 0;
+        for (let i = 0; i < cart.length; i++) {
+            const element = cart[i];
+            result += element.elem.price * element.count;
+        }
+        return result;
+    }
+
+    function Purchase() {
+        reqBody = [];
+        cart = JSON.parse(localStorage.getItem("inCart") || "[]");
+        for (let i = 0; i < cart.length; i++) {
+            const element = cart[i];
+            reqBody.push({ id: element.elem.id, count: element.count });
+        }
+        $.ajax({
+            url: "purchase.php",
+            method: "post",
+            data: {
+                service: "purchase",
+                items: reqBody,
+            },
+            success: function (data) {
+                localStorage.removeItem("inCart");
+                $(document).ready(function () {
+                    products();
+                });
+                showAlert([
+                    "Success!",
+                    "Your purchase has been confirmed and total amount due to pay is " +
+                        data +
+                        "$",
+                ]);
+            },
+            error: function (xhr) {
+                showAlert(xhr);
+            },
+        });
+    }
+
+    function Cancel() {
+        reqBody = [];
+        cart = JSON.parse(localStorage.getItem("inCart") || "[]");
+        for (let i = 0; i < cart.length; i++) {
+            const element = cart[i];
+            reqBody.push({ id: element.elem.id, count: element.count });
+        }
+        $.ajax({
+            url: "purchase.php",
+            method: "post",
+            data: {
+                service: "cancel",
+                items: reqBody,
+            },
+            success: function (data) {
+                localStorage.removeItem("inCart");
+                $(document).ready(function () {
+                    products();
+                });
+                showAlert([
+                    "Success!",
+                    "Your purchase request has been cancelled, welcome to shop next time",
+                ]);
+            },
+            error: function (xhr) {
+                showAlert(xhr);
+            },
+        });
+    }
+
+    function Logout() {
+        Cancel();
+        localStorage.removeItem("userinfo");
+        $.ajax({
+            url: "logout.php",
+            type: "post",
+            data: {
+                type: "customer",
+            },
+            success: function (data) {
+                document.location.href = "logout.html?name=" + data;
+            },
+        });
+    }
 </script>
 
 <style>
     td,
     th {
-        border-bottom: 1px solid #aaa;
-        border-top: 1px solid #aaa;
-        border-collapse: collapse;
         text-align: center;
         height: 40px;
     }
@@ -123,13 +250,24 @@
 
 <html>
     <body>
-        <script>
-            CustomerHeader();
-        </script>
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="buyonline.html">BuyOnline</a>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="buying.html">Products</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="javascript:Logout()">Logout</a></li>
+                </ul>
+            </div>
+        </nav>
+
         <div
             class="container"
             style="
-                width: 60%;
+                width: 70%;
                 margin-top: 20vh;
                 height: 70vh;
                 overflow: auto;
@@ -139,10 +277,44 @@
                 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1),
                     0 6px 20px 0 rgba(0, 0, 0, 0.09);
             ">
-            <table
-                id="tableContents"
-                class="table"
-                style="text-align: center; margin-top: 8px"></table>
+            <div style="height: calc(100% - 80px); overflow: auto">
+                <table
+                    id="products"
+                    class="table"
+                    style="text-align: center; margin-top: 8px"></table>
+            </div>
+
+            <table class="table">
+                <tr>
+                    <th style="line-height: 40px">
+                        <div
+                            id="totalAmount"
+                            style="
+                                width: fit-content;
+                                margin: auto;
+                                font-size: large;
+                            "></div>
+                    </th>
+                    <th>
+                        <button
+                            class="btn btn-primary"
+                            style="float: right; margin-top: 8px"
+                            onclick="Purchase()">
+                            Confirm Purchase
+                        </button>
+                        <button
+                            class="btn btn-default"
+                            style="
+                                float: right;
+                                margin-top: 8px;
+                                margin-right: 10px;
+                            "
+                            onclick="Cancel()">
+                            Cancel Purchase
+                        </button>
+                    </th>
+                </tr>
+            </table>
         </div>
         <script>
             Alert();

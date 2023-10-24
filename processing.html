@@ -10,14 +10,110 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="utils.js"></script>
 
+    <script>
+        function init() {
+            $.ajax({
+                type: "GET",
+                url: "processing.php",
+                success: function (items) {
+                    items = JSON.parse(items);
+                    let table = document.getElementById("tableContents");
+                    table.innerHTML =
+                        "<tr><th>No.</th><th>Name</th><th>Price</th><th>Available</th><th>On hold</th><th>Sold</th></tr>";
+                    let num = 1;
+                    items.forEach((element) => {
+                        let row = table.insertRow(-1);
+                        let number = row.insertCell(0);
+                        number.innerText = num;
+                        number.style = "width: 20px;";
+                        for (var key in element) {
+                            if (key == "id") {
+                                continue;
+                            }
+                            let col = row.insertCell(-1);
+                            col.style = "width: 100px;";
+                            col.innerText = element[key];
+                        }
+                        num++;
+                    });
+                },
+                error: function (xhr, statusCode, status) {
+                    showAlert(xhr);
+                },
+            });
+        }
+        $(document).ready(init());
+
+        function Process() {
+            $.ajax({
+                url: "processing.php",
+                type: "post",
+                success: function () {
+                    init();
+                },
+                error: function (xhr) {
+                    showAlert(xhr);
+                },
+            });
+        }
+
+        function Logout() {
+            localStorage.removeItem("manager");
+            $.ajax({
+                url: "logout.php",
+                type: "post",
+                data: {
+                    type: "manager",
+                },
+                success: function (data) {
+                    document.location.href = "logout.html?name=" + data;
+                },
+            });
+        }
+    </script>
+
+    <style>
+        td,
+        th {
+            text-align: center;
+            height: 40px;
+        }
+    </style>
+
     <body>
         <script>
             ManagerHeader();
         </script>
 
-        <div class="container" style="margin: auto">
-            <form action=""></form>
-            <table></table>
+        <div
+            class="container"
+            style="
+                width: 60%;
+                margin-top: 20vh;
+                height: 70vh;
+                overflow: auto;
+                margin-top: 15vh;
+                background-color: white;
+                border-radius: 20px;
+                box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1),
+                    0 6px 20px 0 rgba(0, 0, 0, 0.09);
+                padding: 20;
+            ">
+            <div style="height: 90%">
+                <table
+                    id="tableContents"
+                    class="table"
+                    style="text-align: center; margin-top: 8px"></table>
+            </div>
+            <div>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    style="float: right"
+                    onclick="Process()">
+                    Process
+                </button>
+            </div>
         </div>
 
         <script>

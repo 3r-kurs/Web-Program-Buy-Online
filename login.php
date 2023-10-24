@@ -27,7 +27,7 @@ $xml = simplexml_load_string($xmlFile);
 for ($i = 0; $i < count($xml); $i++) {
     if ($email == $xml->user[$i]->email) {
         if ($password == $xml->user[$i]->password) {
-            $_SESSION["customer"] = (int) $xml->user[$i]->id;
+            $_SESSION["customer"] = (string) $xml->user[$i]->firstname;
             http_response_code(200);
             $response = new stdClass();
             $response->id = (int) $xml->user[$i]->id;

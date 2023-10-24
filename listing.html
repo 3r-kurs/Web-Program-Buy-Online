@@ -37,6 +37,19 @@
                 },
             });
         }
+        function Logout() {
+            localStorage.removeItem("manager");
+            $.ajax({
+                url: "logout.php",
+                type: "post",
+                data: {
+                    type: "manager",
+                },
+                success: function (data) {
+                    document.location.href = "logout.html?name=" + data;
+                },
+            });
+        }
     </script>
 
     <body>

@@ -20,10 +20,39 @@
         var email = document.getElementById("email").value;
         var firstname = document.getElementById("firstname").value;
         var lastname = document.getElementById("lastname").value;
+        var pass = document.getElementById("password").value;
+        var re_pass = document.getElementById("re_password").value;
+        if (
+            email == "" ||
+            firstname == "" ||
+            lastname == "" ||
+            pass == "" ||
+            re_pass == ""
+        ) {
+            return false;
+        }
+        if (pass != re_pass) {
+            $("#pass_group").addClass("has-error");
+            document.getElementById("pass_help").innerText =
+                "Passwords do not match";
+            return false;
+        } else {
+            $("#pass_group").removeClass("has-error");
+            document.getElementById("pass_help").innerText = "";
+        }
         var md5Password = CryptoJS.MD5(
             document.getElementById("password").value
         ).toString();
         var phone_no = document.getElementById("phone_no").value;
+        if (phone_no !== "") {
+            var pattern = /\(?0\d\)?\s?\d{8}/;
+            if (phone_no.match(pattern) == null) {
+                $("#phone_group").addClass("has-error");
+                document.getElementById("phone_help").innerText =
+                    "Invalid phone number format";
+                return false;
+            }
+        }
         $.ajax({
             type: "POST",
             url: "register.php",
@@ -35,10 +64,9 @@
                 phone_no: phone_no,
             },
             success: function (data) {
-                alert("success");
+                document.location.href = "login.html";
             },
             error: function (xhr, status, error) {
-                console.log(xhr);
                 showAlert(xhr);
             },
         });
@@ -53,9 +81,10 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                margin-top: calc((100vh - 580px) / 2);
-                height: 580px;
+                margin-top: calc((100vh - 600px) / 2);
+                height: 600px;
                 width: 400px;
+                overflow: auto;
                 background-color: rgb(240, 240, 240);
                 border-radius: 30px;
                 box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
@@ -63,7 +92,7 @@
             ">
             <div style="display: block">
                 <form method="post">
-                    <div class="row" style="margin-top: 16px">
+                    <div class="row" style="margin-top: 20px">
                         <input
                             required
                             class="form-control input-lg"
@@ -73,7 +102,7 @@
                             placeholder="Email"
                             id="email" />
                     </div>
-                    <div class="row" style="margin-top: 16px">
+                    <div class="row" style="margin-top: 20px">
                         <input
                             required
                             class="form-control input-lg"
@@ -82,7 +111,7 @@
                             placeholder="Last name"
                             id="lastname" />
                     </div>
-                    <div class="row" style="margin-top: 16px">
+                    <div class="row" style="margin-top: 20px">
                         <input
                             required
                             class="form-control input-lg"
@@ -91,7 +120,7 @@
                             placeholder="First name"
                             id="firstname" />
                     </div>
-                    <div class="row" style="margin-top: 16px">
+                    <div class="row" style="margin-top: 20px">
                         <input
                             required
                             class="form-control input-lg"
@@ -100,24 +129,30 @@
                             placeholder="Password"
                             id="password" />
                     </div>
-                    <div class="row" style="margin-top: 16px">
-                        <input
-                            required
-                            class="form-control input-lg"
-                            style="font-size: medium"
-                            type="password"
-                            placeholder="Re-enter password"
-                            id="re_password" />
+                    <div class="row" style="margin-top: 20px">
+                        <div id="pass_group" class="form-group">
+                            <input
+                                required
+                                class="form-control input-lg"
+                                style="font-size: medium"
+                                type="password"
+                                placeholder="Re-enter password"
+                                id="re_password" />
+                            <span class="help-block" id="pass_help"></span>
+                        </div>
                     </div>
-                    <div class="row" style="margin-top: 16px">
-                        <input
-                            class="form-control input-lg"
-                            style="font-size: medium"
-                            type="tel"
-                            placeholder="Phone number"
-                            id="phone_no" />
+                    <div class="row" style="margin-top: 8px">
+                        <div id="phone_group" class="form-group">
+                            <input
+                                class="form-control input-lg"
+                                style="font-size: medium"
+                                type="tel"
+                                placeholder="Phone number"
+                                id="phone_no" />
+                            <span class="help-block" id="phone_help"></span>
+                        </div>
                     </div>
-                    <div class="row" style="margin-top: 16px">
+                    <div class="row" style="margin-top: 10px">
                         <button
                             class="btn btn-primary col-sm-12"
                             style="
@@ -125,14 +160,13 @@
                                 width: calc(100% - 80px);
                                 margin-left: 40px;
                             "
-                            type="button"
-                            name="submit"
+                            type="submit"
                             onclick="Register()">
                             Register
                         </button>
                     </div>
                 </form>
-                <div class="row" style="margin-top: 16px">
+                <div class="row" style="margin-top: 10px">
                     <button
                         class="btn btn-default col-sm-12"
                         style="
